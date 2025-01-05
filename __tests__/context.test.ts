@@ -9,7 +9,7 @@ import {Toolkit} from '@docker/actions-toolkit/lib/toolkit';
 
 import {ContextSource, getContext, getInputs, Inputs} from '../src/context';
 
-const toolkit = new Toolkit({githubToken: 'fake-github-token'});
+let toolkit = new Toolkit({githubToken: 'fake-github-token'});
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -103,7 +103,7 @@ describe('getInputs', () => {
 });
 
 describe('getContext', () => {
-  const originalEnv = process.env;
+  let originalEnv = process.env;
   beforeEach(() => {
     jest.resetModules();
     process.env = {
@@ -116,7 +116,7 @@ describe('getContext', () => {
   });
 
   it('workflow', async () => {
-    const context = await getContext(ContextSource.workflow, toolkit);
+    let context = await getContext(ContextSource.workflow, toolkit);
     expect(context.ref).toEqual('refs/heads/dev');
     expect(context.sha).toEqual('5f3331d7f7044c18ca9f12c77d961c4d7cf3276a');
     expect(context.commitDate).toEqual(new Date('2024-11-13T13:42:28.000Z'));
@@ -132,7 +132,7 @@ describe('getContext', () => {
     jest.spyOn(Git, 'commitDate').mockImplementation(async (): Promise<Date> => {
       return new Date('2023-01-01T13:42:28.000Z');
     });
-    const context = await getContext(ContextSource.git, toolkit);
+    let context = await getContext(ContextSource.git, toolkit);
     expect(context.ref).toEqual('refs/heads/git-test');
     expect(context.sha).toEqual('git-test-sha');
     expect(context.commitDate).toEqual(new Date('2023-01-01T13:42:28.000Z'));
