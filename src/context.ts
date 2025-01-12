@@ -56,7 +56,7 @@ export async function getContext(source: ContextSource, toolkit: Toolkit): Promi
 }
 
 async function getContextFromWorkflow(toolkit: Toolkit): Promise<Context> {
-  let context = GitHub.context;
+  const context = GitHub.context;
 
   // Needs to override Git reference with pr ref instead of upstream branch ref
   // for pull_request_target event
@@ -81,7 +81,7 @@ async function getContextFromWorkflow(toolkit: Toolkit): Promise<Context> {
 }
 
 async function getContextFromGit(): Promise<Context> {
-  let ctx = await Git.context();
+  const ctx = await Git.context();
 
   return {
     commitDate: await Git.commitDate(ctx.sha),
@@ -90,7 +90,7 @@ async function getContextFromGit(): Promise<Context> {
 }
 
 async function getCommitDateFromWorkflow(sha: string, toolkit: Toolkit): Promise<Date> {
-  let event = GitHub.context.payload as unknown as {
+  const event = GitHub.context.payload as unknown as {
     // branch push
     commits?: Array<{
       timestamp: string;
@@ -106,7 +106,7 @@ async function getCommitDateFromWorkflow(sha: string, toolkit: Toolkit): Promise
   };
 
   if (event.commits) {
-    let commitDate = event.commits.find(x => x.id === sha)?.timestamp;
+    const commitDate = event.commits.find(x => x.id === sha)?.timestamp;
     if (commitDate) {
       return new Date(commitDate);
     }
@@ -120,7 +120,7 @@ async function getCommitDateFromWorkflow(sha: string, toolkit: Toolkit): Promise
 
   // fallback to github api for commit date
   try {
-    let commit = await toolkit.github.octokit.rest.repos.getCommit({
+    const commit = await toolkit.github.octokit.rest.repos.getCommit({
       owner: GitHub.context.repo.owner,
       repo: GitHub.context.repo.repo,
       ref: sha
