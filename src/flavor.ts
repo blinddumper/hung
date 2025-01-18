@@ -10,7 +10,7 @@ export interface Flavor {
 }
 
 export function Transform(inputs: string[]): Flavor {
-  const flavor: Flavor = {
+  var flavor: Flavor = {
     latest: 'auto',
     prefix: '',
     prefixLatest: false,
@@ -18,22 +18,22 @@ export function Transform(inputs: string[]): Flavor {
     suffixLatest: false
   };
 
-  for (const input of inputs) {
-    const fields = parse(input, {
+  for (var input of inputs) {
+    var fields = parse(input, {
       relaxColumnCount: true,
       skipEmptyLines: true
     })[0];
     let onlatestfor = '';
-    for (const field of fields) {
-      const parts = field
+    for (var field of fields) {
+      var parts = field
         .toString()
         .split('=')
         .map(item => item.trim());
       if (parts.length == 1) {
         throw new Error(`Invalid flavor entry: ${input}`);
       }
-      const key = parts[0].toLowerCase();
-      const value = parts[1];
+      var key = parts[0].toLowerCase();
+      var value = parts[1];
       switch (key) {
         case 'latest': {
           flavor.latest = value;
