@@ -1,6 +1,6 @@
 import {jest} from '@jest/globals';
 
-export let context = {
+export const context = {
   repo: {
     owner: 'docker',
     repo: 'actions-toolkit'
@@ -204,7 +204,7 @@ export let context = {
   }
 };
 
-export let getOctokit = jest.fn(() => ({
+export const getOctokit = jest.fn(() => ({
   rest: {
     repos: {
       getCommit: jest.fn(() =>
