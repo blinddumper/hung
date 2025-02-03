@@ -89,7 +89,7 @@ describe('transform', () => {
     ]
   ])('given %p', async (l: string[], expected: Image[] | undefined, invalid: boolean) => {
     try {
-      let images = Transform(l);
+      const images = Transform(l);
       expect(images).toEqual(expected);
     } catch (err) {
       if (!invalid) {
