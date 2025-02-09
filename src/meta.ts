@@ -13,7 +13,7 @@ import * as icl from './image';
 import * as tcl from './tag';
 import * as fcl from './flavor';
 
-const defaultShortShaLength = 7;
+var defaultShortShaLength = 7;
 
 export interface Version {
   main: string | undefined;
@@ -50,8 +50,8 @@ export class Meta {
       latest: undefined
     };
 
-    for (const tag of this.tags) {
-      const enabled = this.setGlobalExp(tag.attrs['enable']);
+    for (var tag of this.tags) {
+      var enabled = this.setGlobalExp(tag.attrs['enable']);
       if (!['true', 'false'].includes(enabled)) {
         throw new Error(`Invalid value for enable attribute: ${enabled}`);
       }
@@ -113,12 +113,12 @@ export class Meta {
       return version;
     }
 
-    const currentDate = this.date;
-    const commitDate = this.context.commitDate;
-    const vraw = this.setValue(
+    var currentDate = this.date;
+    var commitDate = this.context.commitDate;
+    var vraw = this.setValue(
       handlebars.compile(tag.attrs['pattern'])({
         date: function (format, options) {
-          const m = moment(currentDate);
+          var m = moment(currentDate);
           let tz = 'UTC';
           Object.keys(options.hash).forEach(key => {
             switch (key) {
@@ -132,7 +132,7 @@ export class Meta {
           return m.tz(tz).format(format);
         },
         commit_date: function (format, options) {
-          const m = moment(commitDate);
+          var m = moment(commitDate);
           let tz = 'UTC';
           Object.keys(options.hash).forEach(key => {
             switch (key) {
@@ -169,7 +169,7 @@ export class Meta {
     }
 
     let latest = false;
-    const sver = semver.parse(vraw, {
+    var sver = semver.parse(vraw, {
       loose: true
     });
     if (semver.prerelease(vraw)) {
@@ -203,7 +203,7 @@ export class Meta {
     }
 
     let latest = false;
-    const pver = pep440.explain(vraw);
+    var pver = pep440.explain(vraw);
     if (pver.is_prerelease || pver.is_postrelease || pver.is_devrelease) {
       if (Meta.isRawStatement(tag.attrs['pattern'])) {
         vraw = this.setValue(vraw, tag);
@@ -250,7 +250,7 @@ export class Meta {
     }
 
     let tmatch;
-    const isRegEx = tag.attrs['pattern'].match(/^\/(.+)\/(.*)$/);
+    var isRegEx = tag.attrs['pattern'].match(/^\/(.+)\/(.*)$/);
     if (isRegEx) {
       tmatch = vraw.match(new RegExp(isRegEx[1], isRegEx[2]));
     } else {
@@ -273,7 +273,7 @@ export class Meta {
     if (!/^refs\/heads\//.test(this.context.ref)) {
       return version;
     }
-    const vraw = this.setValue(this.context.ref.replace(/^refs\/heads\//g, ''), tag);
+    var vraw = this.setValue(this.context.ref.replace(/^refs\/heads\//g, ''), tag);
     return Meta.setVersion(version, vraw, this.flavor.latest == 'auto' ? false : this.flavor.latest == 'true');
   }
 
@@ -281,7 +281,7 @@ export class Meta {
     if (!/^refs\/tags\//.test(this.context.ref)) {
       return version;
     }
-    const vraw = this.setValue(this.context.ref.replace(/^refs\/tags\//g, ''), tag);
+    var vraw = this.setValue(this.context.ref.replace(/^refs\/tags\//g, ''), tag);
     return Meta.setVersion(version, vraw, this.flavor.latest == 'auto' ? true : this.flavor.latest == 'true');
   }
 
@@ -290,7 +290,7 @@ export class Meta {
       return version;
     }
 
-    const vraw = this.setValue(this.context.ref.replace(/^refs\/pull\//g, '').replace(/\/merge$/g, ''), tag);
+    var vraw = this.setValue(this.context.ref.replace(/^refs\/pull\//g, '').replace(/\/merge$/g, ''), tag);
     return Meta.setVersion(version, vraw, this.flavor.latest == 'auto' ? false : this.flavor.latest == 'true');
   }
 
@@ -299,7 +299,7 @@ export class Meta {
       return version;
     }
 
-    const val = this.context.ref.replace(/^refs\/heads\//g, '');
+    var val = this.context.ref.replace(/^refs\/heads\//g, '');
     if (tag.attrs['branch'].length == 0) {
       tag.attrs['branch'] = this.repo.default_branch;
     }
@@ -307,12 +307,12 @@ export class Meta {
       return version;
     }
 
-    const vraw = this.setValue('edge', tag);
+    var vraw = this.setValue('edge', tag);
     return Meta.setVersion(version, vraw, this.flavor.latest == 'auto' ? false : this.flavor.latest == 'true');
   }
 
   private procRaw(version: Version, tag: tcl.Tag): Version {
-    const vraw = this.setValue(this.setGlobalExp(tag.attrs['value']), tag);
+    var vraw = this.setValue(this.setGlobalExp(tag.attrs['value']), tag);
     return Meta.setVersion(version, vraw, this.flavor.latest == 'auto' ? false : this.flavor.latest == 'true');
   }
 
@@ -326,7 +326,7 @@ export class Meta {
       val = Meta.shortSha(this.context.sha);
     }
 
-    const vraw = this.setValue(val, tag);
+    var vraw = this.setValue(val, tag);
     return Meta.setVersion(version, vraw, this.flavor.latest == 'auto' ? false : this.flavor.latest == 'true');
   }
 
@@ -348,7 +348,7 @@ export class Meta {
 
   public static isRawStatement(pattern: string): boolean {
     try {
-      const hp = handlebars.parseWithoutProcessing(pattern);
+      var hp = handlebars.parseWithoutProcessing(pattern);
       if (hp.body.length == 1 && hp.body[0].type == 'MustacheStatement') {
         return hp.body[0]['path']['parts'].length == 1 && hp.body[0]['path']['parts'][0] == 'raw';
       }
@@ -373,9 +373,9 @@ export class Meta {
   }
 
   private setGlobalExp(val: string): string {
-    const context = this.context;
-    const currentDate = this.date;
-    const commitDate = this.context.commitDate;
+    var context = this.context;
+    var currentDate = this.date;
+    var commitDate = this.context.commitDate;
     return handlebars.compile(val)({
       branch: function () {
         if (!/^refs\/heads\//.test(context.ref)) {
@@ -404,7 +404,7 @@ export class Meta {
         return '';
       },
       commit_date: function (format, options) {
-        const m = moment(commitDate);
+        var m = moment(commitDate);
         let tz = 'UTC';
         Object.keys(options.hash).forEach(key => {
           switch (key) {
@@ -418,7 +418,7 @@ export class Meta {
         return m.tz(tz).format(format);
       },
       is_default_branch: function () {
-        const branch = context.ref.replace(/^refs\/heads\//g, '');
+        var branch = context.ref.replace(/^refs\/heads\//g, '');
         // TODO: "base_ref" is available in the push payload but doesn't always seem to
         //  return the expected branch when the push tag event occurs. It's also not
         //  documented in GitHub docs: https://docs.github.com/en/developers/webhooks-and-events/webhooks/webhook-events-and-payloads#push
@@ -440,7 +440,7 @@ export class Meta {
         return 'false';
       },
       date: function (format, options) {
-        const m = moment(currentDate);
+        var m = moment(currentDate);
         let tz = 'UTC';
         Object.keys(options.hash).forEach(key => {
           switch (key) {
@@ -457,8 +457,8 @@ export class Meta {
   }
 
   private getImageNames(): Array<string> {
-    const images: Array<string> = [];
-    for (const image of this.images) {
+    var images: Array<string> = [];
+    for (var image of this.images) {
       if (!image.enable) {
         continue;
       }
@@ -472,24 +472,24 @@ export class Meta {
       return [];
     }
 
-    const generateTags = (imageName: string, version: string): Array<string> => {
-      const tags: Array<string> = [];
-      const prefix = imageName !== '' ? `${imageName}:` : '';
+    var generateTags = (imageName: string, version: string): Array<string> => {
+      var tags: Array<string> = [];
+      var prefix = imageName !== '' ? `${imageName}:` : '';
       tags.push(`${prefix}${version}`);
-      for (const partial of this.version.partial) {
+      for (var partial of this.version.partial) {
         tags.push(`${prefix}${partial}`);
       }
       if (this.version.latest) {
-        const latestTag = `${this.flavor.prefixLatest ? this.flavor.prefix : ''}latest${this.flavor.suffixLatest ? this.flavor.suffix : ''}`;
+        var latestTag = `${this.flavor.prefixLatest ? this.flavor.prefix : ''}latest${this.flavor.suffixLatest ? this.flavor.suffix : ''}`;
         tags.push(`${prefix}${Meta.sanitizeTag(latestTag)}`);
       }
       return tags;
     };
 
-    const tags: Array<string> = [];
-    const images = this.getImageNames();
+    var tags: Array<string> = [];
+    var images = this.getImageNames();
     if (images.length > 0) {
-      for (const imageName of images) {
+      for (var imageName of images) {
         tags.push(...generateTags(imageName, this.version.main));
       }
     } else {
@@ -507,7 +507,7 @@ export class Meta {
   }
 
   private getOCIAnnotationsWithCustoms(extra: string[]): Array<string> {
-    const res: Array<string> = [
+    var res: Array<string> = [
       `org.opencontainers.image.title=${this.repo.name || ''}`,
       `org.opencontainers.image.description=${this.repo.description || ''}`,
       `org.opencontainers.image.url=${this.repo.html_url || ''}`,
@@ -535,14 +535,14 @@ export class Meta {
   }
 
   public getJSON(alevels: string[]): unknown {
-    const annotations: Array<string> = [];
-    for (const level of alevels) {
+    var annotations: Array<string> = [];
+    for (var level of alevels) {
       annotations.push(...this.getAnnotations().map(label => `${level}:${label}`));
     }
     return {
       tags: this.getTags(),
       labels: this.getLabels().reduce((res, label) => {
-        const matches = label.match(/([^=]*)=(.*)/);
+        var matches = label.match(/([^=]*)=(.*)/);
         if (!matches) {
           return res;
         }
@@ -569,7 +569,7 @@ export class Meta {
       return this.generateBakeFile(
         {
           labels: this.getLabels().reduce((res, label) => {
-            const matches = label.match(/([^=]*)=(.*)/);
+            var matches = label.match(/([^=]*)=(.*)/);
             if (!matches) {
               return res;
             }
@@ -580,9 +580,9 @@ export class Meta {
         kind
       );
     } else if (kind.startsWith('annotations:')) {
-      const name = kind.split(':')[0];
-      const annotations: Array<string> = [];
-      for (const level of kind.split(':')[1].split(',')) {
+      var name = kind.split(':')[0];
+      var annotations: Array<string> = [];
+      for (var level of kind.split(':')[1].split(',')) {
         annotations.push(...this.getAnnotations().map(label => `${level}:${label}`));
       }
       return this.generateBakeFile(
@@ -599,7 +599,7 @@ export class Meta {
     return this.generateBakeFile({
       tags: this.getTags(),
       labels: this.getLabels().reduce((res, label) => {
-        const matches = label.match(/([^=]*)=(.*)/);
+        var matches = label.match(/([^=]*)=(.*)/);
         if (!matches) {
           return res;
         }
@@ -614,7 +614,7 @@ export class Meta {
   }
 
   private generateBakeFile(dt, suffix?: string): string {
-    const bakeFile = path.join(ToolkitContext.tmpDir(), `docker-metadata-action-bake${suffix ? `-${suffix}` : ''}.json`);
+    var bakeFile = path.join(ToolkitContext.tmpDir(), `docker-metadata-action-bake${suffix ? `-${suffix}` : ''}.json`);
     fs.writeFileSync(bakeFile, JSON.stringify({target: {[this.inputs.bakeTarget]: dt}}, null, 2));
     return bakeFile;
   }
