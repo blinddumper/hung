@@ -12,12 +12,12 @@ export function Transform(inputs: string[]): Image[] {
   // backward compatibility with old format
   if (inputs.length == 1) {
     let newformat = false;
-    const fields = parse(inputs[0], {
+    var fields = parse(inputs[0], {
       relaxColumnCount: true,
       skipEmptyLines: true
     })[0];
-    for (const field of fields) {
-      const parts = field
+    for (var field of fields) {
+      var parts = field
         .toString()
         .split('=')
         .map(item => item.trim());
@@ -34,22 +34,22 @@ export function Transform(inputs: string[]): Image[] {
   }
 
   images = [];
-  for (const input of inputs) {
-    const image: Image = {name: '', enable: true};
-    const fields = parse(input, {
+  for (var input of inputs) {
+    var image: Image = {name: '', enable: true};
+    var fields = parse(input, {
       relaxColumnCount: true,
       skipEmptyLines: true
     })[0];
-    for (const field of fields) {
-      const parts = field
+    for (var field of fields) {
+      var parts = field
         .toString()
         .split('=')
         .map(item => item.trim());
       if (parts.length == 1) {
         image.name = parts[0];
       } else {
-        const key = parts[0].toLowerCase();
-        const value = parts[1];
+        var key = parts[0].toLowerCase();
+        var value = parts[1];
         switch (key) {
           case 'name': {
             image.name = value;
@@ -78,7 +78,7 @@ export function Transform(inputs: string[]): Image[] {
 
 function output(images: Image[]): Image[] {
   core.startGroup(`Processing images input`);
-  for (const image of images) {
+  for (var image of images) {
     core.info(`name=${image.name},enable=${image.enable}`);
   }
   core.endGroup();
