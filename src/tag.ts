@@ -32,15 +32,15 @@ export class Tag {
   }
 
   public toString(): string {
-    let out: string[] = [`type=${this.type}`];
-    for (let attr in this.attrs) {
+    const out: string[] = [`type=${this.type}`];
+    for (const attr in this.attrs) {
       out.push(`${attr}=${this.attrs[attr]}`);
     }
     return out.join(',');
   }
 }
 
-export let DefaultPriorities: Record<Type, string> = {
+export const DefaultPriorities: Record<Type, string> = {
   [Type.Schedule]: '1000',
   [Type.Semver]: '900',
   [Type.Pep440]: '900',
@@ -52,7 +52,7 @@ export let DefaultPriorities: Record<Type, string> = {
 };
 
 export function Transform(inputs: string[]): Tag[] {
-  let tags: Tag[] = [];
+  const tags: Tag[] = [];
   if (inputs.length == 0) {
     // prettier-ignore
     inputs = [
@@ -63,10 +63,10 @@ export function Transform(inputs: string[]): Tag[] {
     ];
   }
 
-  for (let input of inputs) {
+  for (const input of inputs) {
     tags.push(Parse(input));
   }
-  let sorted = tags.sort((tag1, tag2) => {
+  const sorted = tags.sort((tag1, tag2) => {
     if (Number(tag1.attrs['priority']) < Number(tag2.attrs['priority'])) {
       return 1;
     }
@@ -77,7 +77,7 @@ export function Transform(inputs: string[]): Tag[] {
   });
 
   core.startGroup(`Processing tags input`);
-  for (let tag of sorted) {
+  for (const tag of sorted) {
     core.info(tag.toString());
   }
   core.endGroup();
@@ -86,22 +86,22 @@ export function Transform(inputs: string[]): Tag[] {
 }
 
 export function Parse(s: string): Tag {
-  let fields = parse(s, {
+  const fields = parse(s, {
     relaxColumnCount: true,
     skipEmptyLines: true
   })[0];
 
-  let tag = new Tag();
-  for (let field of fields) {
-    let parts = field
+  const tag = new Tag();
+  for (const field of fields) {
+    const parts = field
       .toString()
       .split(/(?<=^[^=]+?)=/)
       .map(item => item.trim());
     if (parts.length == 1) {
       tag.attrs['value'] = parts[0];
     } else {
-      let key = parts[0].toLowerCase();
-      let value = parts[1];
+      const key = parts[0].toLowerCase();
+      const value = parts[1];
       switch (key) {
         case 'type': {
           if (!Object.values(Type).includes(value)) {
