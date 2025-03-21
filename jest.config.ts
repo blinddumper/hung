@@ -2,7 +2,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 
-const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'docker-metadata-action-'));
+let tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'docker-metadata-action-'));
 
 process.env = Object.assign({}, process.env, {
   TEMP: tmpDir,
