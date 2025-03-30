@@ -58,22 +58,22 @@ describe('isRawStatement', () => {
   });
 });
 
-let tagsLabelsTest = async (name: string, envFile: string, inputs: Inputs, exVersion: Version, exTags: Array<string>, exLabels: Array<string>, exAnnotations: Array<string> | undefined) => {
+const tagsLabelsTest = async (name: string, envFile: string, inputs: Inputs, exVersion: Version, exTags: Array<string>, exLabels: Array<string>, exAnnotations: Array<string> | undefined) => {
   process.env = dotenv.parse(fs.readFileSync(path.join(__dirname, 'fixtures', envFile)));
-  let toolkit = new Toolkit();
-  let repo = await toolkit.github.repoData();
-  let meta = new Meta({...getInputs(), ...inputs}, await getContext(ContextSource.workflow, toolkit), repo);
+  const toolkit = new Toolkit();
+  const repo = await toolkit.github.repoData();
+  const meta = new Meta({...getInputs(), ...inputs}, await getContext(ContextSource.workflow, toolkit), repo);
 
-  let version = meta.version;
+  const version = meta.version;
   expect(version).toEqual(exVersion);
 
-  let tags = meta.getTags();
+  const tags = meta.getTags();
   expect(tags).toEqual(exTags);
 
-  let labels = meta.getLabels();
+  const labels = meta.getLabels();
   expect(labels).toEqual(exLabels);
 
-  let annotations = meta.getAnnotations();
+  const annotations = meta.getAnnotations();
   expect(annotations).toEqual(exAnnotations ?? exLabels);
 };
 
@@ -3048,20 +3048,20 @@ describe('pr-head-sha', () => {
     process.env = dotenv.parse(fs.readFileSync(path.join(__dirname, 'fixtures', envFile)));
     process.env.DOCKER_METADATA_PR_HEAD_SHA = 'true';
 
-    let toolkit = new Toolkit();
-    let repo = await toolkit.github.repoData();
-    let meta = new Meta({...getInputs(), ...inputs}, await getContext(ContextSource.workflow, toolkit), repo);
+    const toolkit = new Toolkit();
+    const repo = await toolkit.github.repoData();
+    const meta = new Meta({...getInputs(), ...inputs}, await getContext(ContextSource.workflow, toolkit), repo);
 
-    let version = meta.version;
+    const version = meta.version;
     expect(version).toEqual(exVersion);
 
-    let tags = meta.getTags();
+    const tags = meta.getTags();
     expect(tags).toEqual(exTags);
 
-    let labels = meta.getLabels();
+    const labels = meta.getLabels();
     expect(labels).toEqual(exLabelsAnnotations);
 
-    let annotations = meta.getAnnotations();
+    const annotations = meta.getAnnotations();
     expect(annotations).toEqual(exLabelsAnnotations);
   });
 });
@@ -4126,11 +4126,11 @@ describe('json', () => {
   ])('given %p with %p event', async (name: string, envFile: string, inputs: Inputs, exJSON: unknown) => {
     process.env = dotenv.parse(fs.readFileSync(path.join(__dirname, 'fixtures', envFile)));
 
-    let toolkit = new Toolkit();
-    let repo = await toolkit.github.repoData();
-    let meta = new Meta({...getInputs(), ...inputs}, await getContext(ContextSource.workflow,toolkit), repo);
+    const toolkit = new Toolkit();
+    const repo = await toolkit.github.repoData();
+    const meta = new Meta({...getInputs(), ...inputs}, await getContext(ContextSource.workflow,toolkit), repo);
 
-    let jsonOutput = meta.getJSON(['manifest']);
+    const jsonOutput = meta.getJSON(['manifest']);
     expect(jsonOutput).toEqual(exJSON);
   });
 });
@@ -4642,17 +4642,17 @@ describe('bakeFile', () => {
   ])('given %p with %p event', async (name: string, envFile: string, inputs: Inputs, exBakeTags: unknown, exBakeLabels: unknown, exBakeAnnotations: unknown) => {
     process.env = dotenv.parse(fs.readFileSync(path.join(__dirname, 'fixtures', envFile)));
 
-    let toolkit = new Toolkit();
-    let repo = await toolkit.github.repoData();
-    let meta = new Meta({...getInputs(), ...inputs}, await getContext(ContextSource.workflow,toolkit), repo);
+    const toolkit = new Toolkit();
+    const repo = await toolkit.github.repoData();
+    const meta = new Meta({...getInputs(), ...inputs}, await getContext(ContextSource.workflow,toolkit), repo);
 
-    let bakeFileTags = meta.getBakeFile('tags');
+    const bakeFileTags = meta.getBakeFile('tags');
     expect(JSON.parse(fs.readFileSync(bakeFileTags, 'utf8'))).toEqual(exBakeTags);
 
-    let bakeFileLabels = meta.getBakeFile('labels');
+    const bakeFileLabels = meta.getBakeFile('labels');
     expect(JSON.parse(fs.readFileSync(bakeFileLabels, 'utf8'))).toEqual(exBakeLabels);
 
-    let bakeFileAnnotations = meta.getBakeFile('annotations:index,manifest-descriptor');
+    const bakeFileAnnotations = meta.getBakeFile('annotations:index,manifest-descriptor');
     expect(JSON.parse(fs.readFileSync(bakeFileAnnotations, 'utf8'))).toEqual(exBakeAnnotations);
   });
 });
@@ -4706,11 +4706,11 @@ describe('bakeFileTagsLabels', () => {
   ])('given %p with %p event', async (name: string, envFile: string, inputs: Inputs, exBakeDefinition: unknown) => {
     process.env = dotenv.parse(fs.readFileSync(path.join(__dirname, 'fixtures', envFile)));
 
-    let toolkit = new Toolkit();
-    let repo = await toolkit.github.repoData();
-    let meta = new Meta({...getInputs(), ...inputs}, await getContext(ContextSource.workflow,toolkit), repo);
+    const toolkit = new Toolkit();
+    const repo = await toolkit.github.repoData();
+    const meta = new Meta({...getInputs(), ...inputs}, await getContext(ContextSource.workflow,toolkit), repo);
 
-    let bakeFile = meta.getBakeFileTagsLabels();
+    const bakeFile = meta.getBakeFileTagsLabels();
     expect(JSON.parse(fs.readFileSync(bakeFile, 'utf8'))).toEqual(exBakeDefinition);
   });
 });
@@ -4753,11 +4753,11 @@ describe('sepTags', () => {
 
     process.env = dotenv.parse(fs.readFileSync(path.join(__dirname, 'fixtures', envFile)));
 
-    let toolkit = new Toolkit();
+    const toolkit = new Toolkit();
 
-    let repo = await toolkit.github.repoData();
+    const repo = await toolkit.github.repoData();
 
-    let meta = new Meta({...getInputs(), ...inputs}, await getContext(ContextSource.workflow, toolkit), repo);
+    const meta = new Meta({...getInputs(), ...inputs}, await getContext(ContextSource.workflow, toolkit), repo);
 
     expect(meta.getTags().join(inputs.sepTags)).toEqual(expTags);
   });
