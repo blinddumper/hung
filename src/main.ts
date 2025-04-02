@@ -10,11 +10,11 @@ import {Meta, Version} from './meta';
 actionsToolkit.run(
   // main
   async () => {
-    let inputs: Inputs = getInputs();
-    let toolkit = new Toolkit({githubToken: inputs.githubToken});
-    let context = await getContext(inputs.context, toolkit);
-    let repo = await toolkit.github.repoData();
-    let setOutput = outputEnvEnabled() ? setOutputAndEnv : core.setOutput;
+    const inputs: Inputs = getInputs();
+    const toolkit = new Toolkit({githubToken: inputs.githubToken});
+    const context = await getContext(inputs.context, toolkit);
+    const repo = await toolkit.github.repoData();
+    const setOutput = outputEnvEnabled() ? setOutputAndEnv : core.setOutput;
 
     await core.group(`Context info`, async () => {
       core.info(`eventName: ${context.eventName}`);
@@ -34,9 +34,9 @@ actionsToolkit.run(
       });
     }
 
-    let meta: Meta = new Meta(inputs, context, repo);
+    const meta: Meta = new Meta(inputs, context, repo);
 
-    let version: Version = meta.version;
+    const version: Version = meta.version;
     if (meta.version.main == undefined || meta.version.main.length == 0) {
       core.warning(`No Docker image version has been generated. Check tags input.`);
     } else {
@@ -47,12 +47,12 @@ actionsToolkit.run(
     setOutput('version', version.main || '');
 
     // Docker tags
-    let tags: Array<string> = meta.getTags();
+    const tags: Array<string> = meta.getTags();
     if (tags.length == 0) {
       core.warning('No Docker tag has been generated. Check tags input.');
     } else {
       await core.group(`Docker tags`, async () => {
-        for (let tag of tags) {
+        for (const tag of tags) {
           core.info(tag);
         }
       });
@@ -60,23 +60,23 @@ actionsToolkit.run(
     setOutput('tags', tags.join(inputs.sepTags));
 
     // Docker labels
-    let labels: Array<string> = meta.getLabels();
+    const labels: Array<string> = meta.getLabels();
     await core.group(`Docker labels`, async () => {
-      for (let label of labels) {
+      for (const label of labels) {
         core.info(label);
       }
       setOutput('labels', labels.join(inputs.sepLabels));
     });
 
     // Annotations
-    let annotationsRaw: Array<string> = meta.getAnnotations();
-    let annotationsLevels = process.env.DOCKER_METADATA_ANNOTATIONS_LEVELS || 'manifest';
+    const annotationsRaw: Array<string> = meta.getAnnotations();
+    const annotationsLevels = process.env.DOCKER_METADATA_ANNOTATIONS_LEVELS || 'manifest';
     await core.group(`Annotations`, async () => {
-      let annotations: Array<string> = [];
-      for (let level of annotationsLevels.split(',')) {
+      const annotations: Array<string> = [];
+      for (const level of annotationsLevels.split(',')) {
         annotations.push(
           ...annotationsRaw.map(label => {
-            let v = `${level}:${label}`;
+            const v = `${level}:${label}`;
             core.info(v);
             return v;
           })
@@ -86,16 +86,16 @@ actionsToolkit.run(
     });
 
     // JSON
-    let jsonOutput = meta.getJSON(annotationsLevels.split(','));
+    const jsonOutput = meta.getJSON(annotationsLevels.split(','));
     await core.group(`JSON output`, async () => {
       core.info(JSON.stringify(jsonOutput, null, 2));
       setOutput('json', JSON.stringify(jsonOutput));
     });
 
     // Bake files
-    for (let kind of ['tags', 'labels', 'annotations:' + annotationsLevels]) {
-      let outputName = kind.split(':')[0];
-      let bakeFile: string = meta.getBakeFile(kind);
+    for (const kind of ['tags', 'labels', 'annotations:' + annotationsLevels]) {
+      const outputName = kind.split(':')[0];
+      const bakeFile: string = meta.getBakeFile(kind);
       await core.group(`Bake file definition (${outputName})`, async () => {
         core.info(fs.readFileSync(bakeFile, 'utf8'));
         setOutput(`bake-file-${outputName}`, bakeFile);
