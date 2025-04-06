@@ -169,7 +169,7 @@ describe('transform', () => {
     ]
   ])('given %p attributes', async (inputs: string[], expected: Flavor, invalid: boolean) => {
     try {
-      const flavor = Transform(inputs);
+      let flavor = Transform(inputs);
       expect(flavor).toEqual(expected);
     } catch (err) {
       if (!invalid) {
